@@ -1,7 +1,6 @@
 import logging
 
 
-
 class LoggingModule:
 
     def __init__(self):
