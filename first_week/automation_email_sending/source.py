@@ -8,10 +8,10 @@ import os
 import requests
 from datetime import date
 import logging
+from files import FileService
 
 import schedule
 import time
-
 
 
 today = date.today().strftime("%d %B %Y")
@@ -30,19 +30,18 @@ class EmailSender:
         
 
     def send_email(self):
+        file_service = FileService
         
         try:
             with smtplib.SMTP(host='smtp.gmail.com',port=587) as connection:
                 subject = self.subject.replace('[DATE]',today)
-
-                path = "./files"
-                files = os.listdir(path)
             
                 connection.starttls()
                 connection.login(user=self.sender_email,password=self.sender_password)
                 
                 
                 for email in self.emails:
+                    attachments = file_service.getFiles()
                     message = MIMEMultipart()
                     message['From'] = self.sender_email
                     message['To'] = email
@@ -50,14 +49,8 @@ class EmailSender:
 
                     message_content = f'{self.content.replace("[NAME]",email_data["emails"][email]["name"].title()).replace("[DATE]",today)}'
                     message.attach(MIMEText(message_content))     
-                    for file in files:
-                        with open(os.path.join(path,file), 'rb') as attachment:
-                            # read binary
-                            our_file = MIMEBase('application',f'{file.split(".")[1]}', Name=file)
-                            our_file.set_payload(attachment.read())
-                            encoders.encode_base64(our_file)
-                        message.attach(our_file)
-
+                    for attachment in attachments:
+                         message.attach(attachment)
                     connection.sendmail(from_addr=self.sender_email, to_addrs=email, msg=message.as_string())
             logging.info('Emails were sent successfully')
         except Exception as e:
