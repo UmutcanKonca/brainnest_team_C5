@@ -1,7 +1,6 @@
 import logging
 
 
-
 class LoggingModule:
 
     def __init__(self):
@@ -16,3 +15,4 @@ class LoggingModule:
     def log_error(self,message):
         logging.exception(message)
         
+
