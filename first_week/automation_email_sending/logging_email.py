@@ -14,4 +14,5 @@ class LoggingModule:
         logging.info(message)
     
     def log_error(self,message):
-        logging.error(message)
+        logging.exception(message)
+        

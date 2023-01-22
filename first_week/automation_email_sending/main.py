@@ -4,7 +4,6 @@ from logging_email import LoggingModule
 
 
 logger = LoggingModule()
-
 try:
     files = FileService
     email = EmailService()
